@@ -1,15 +1,15 @@
-# know-your-name-ai
-An AI app to help users learn more about their name. Want to maximize amount of open source software as possible
+# Know Your Name AI
+An AI app to help users learn more about their name. Want to maximize amount of open source software (OSS) as possible
 
 Goal is to use this repo to learn more about:
-- Azure Kubernetes Service
+- **Azure Kubernetes Service (Based on OSS)**
 - Azure App Testing (Load Testing Service)
-    - Locust
-    - Playwright
-- Github Copilot
+    - **Locust (OSS)**
+    - **Playwright (OSS)**
+- **Azure PostgreSQL for Flexible Server (Based on OSS)**
 - API Management + AI
-- Azure PostgreSQL for Flexible Server
-- Agent Framework / Semantic Kernel
-- C# / .NET
+- **Agent Framework / Semantic Kernel (OSS)**
+- **C# / .NET (OSS)**
+- **Terraform (OSS)**
+- Github Copilot
 - Networking best practices
-- Terraform
