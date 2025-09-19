@@ -12,3 +12,4 @@ Goal is to use this repo to learn more about:
 - Agent Framework / Semantic Kernel
 - C# / .NET
 - Networking best practices
+- Terraform
