@@ -2,7 +2,7 @@ name: Deploy to AKS
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
 
 env:
@@ -13,57 +13,57 @@ env:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '8.0.x'
-    
-    - name: Azure Login
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
-    
-    - name: Build and push API image
-      run: |
-        az acr build --registry ${{ env.AZURE_CONTAINER_REGISTRY }} --image knowyourname-api:${{ github.sha }} --image knowyourname-api:latest --file src/KnowYourName.Api/Dockerfile .
-    
-    - name: Build and push Web image
-      run: |
-        az acr build --registry ${{ env.AZURE_CONTAINER_REGISTRY }} --image knowyourname-web:${{ github.sha }} --image knowyourname-web:latest --file src/KnowYourName.Web/Dockerfile .
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Build and push API image
+        run: |
+          az acr build --registry ${{ env.AZURE_CONTAINER_REGISTRY }} --image knowyourname-api:${{ github.sha }} --image knowyourname-api:latest --file src/KnowYourName.Api/Dockerfile .
+
+      - name: Build and push Web image
+        run: |
+          az acr build --registry ${{ env.AZURE_CONTAINER_REGISTRY }} --image knowyourname-web:${{ github.sha }} --image knowyourname-web:latest --file src/KnowYourName.Web/Dockerfile .
 
   deploy:
     runs-on: ubuntu-latest
     needs: build-and-push
-    
+
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Azure Login
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
-    
-    - name: Get AKS credentials
-      run: |
-        az aks get-credentials --resource-group ${{ env.RESOURCE_GROUP }} --name ${{ env.AKS_CLUSTER }}
-    
-    - name: Deploy to AKS
-      run: |
-        # Update image tags in deployment files
-        sed -i 's|acrknownamedevelopment.azurecr.io/knowyourname-api:latest|${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/knowyourname-api:${{ github.sha }}|g' k8s/api-deployment.yaml
-        sed -i 's|acrknownamedevelopment.azurecr.io/knowyourname-web:latest|${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/knowyourname-web:${{ github.sha }}|g' k8s/web-deployment.yaml
-        
-        # Apply Kubernetes manifests
-        kubectl apply -f k8s/namespace.yaml
-        kubectl apply -f k8s/configmap.yaml
-        kubectl apply -f k8s/api-deployment.yaml
-        kubectl apply -f k8s/web-deployment.yaml
-        kubectl apply -f k8s/ingress.yaml
-        
-        # Wait for deployments to be ready
-        kubectl rollout status deployment/knowyourname-api -n knowyourname
-        kubectl rollout status deployment/knowyourname-web -n knowyourname
+      - uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Get AKS credentials
+        run: |
+          az aks get-credentials --resource-group ${{ env.RESOURCE_GROUP }} --name ${{ env.AKS_CLUSTER }}
+
+      - name: Deploy to AKS
+        run: |
+          # Update image tags in deployment files
+          sed -i 's|acrknownamedevelopment.azurecr.io/knowyourname-api:latest|${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/knowyourname-api:${{ github.sha }}|g' k8s/api-deployment.yaml
+          sed -i 's|acrknownamedevelopment.azurecr.io/knowyourname-web:latest|${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/knowyourname-web:${{ github.sha }}|g' k8s/web-deployment.yaml
+
+          # Apply Kubernetes manifests
+          kubectl apply -f k8s/namespace.yaml
+          kubectl apply -f k8s/configmap.yaml
+          kubectl apply -f k8s/api-deployment.yaml
+          kubectl apply -f k8s/web-deployment.yaml
+          kubectl apply -f k8s/ingress.yaml
+
+          # Wait for deployments to be ready
+          kubectl rollout status deployment/knowyourname-api -n knowyourname
+          kubectl rollout status deployment/knowyourname-web -n knowyourname

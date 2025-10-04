@@ -16,34 +16,34 @@ spec:
         app: knowyourname-web
     spec:
       containers:
-      - name: web
-        image: acrknownamedevelopment.azurecr.io/knowyourname-web:latest
-        ports:
-        - containerPort: 8080
-        env:
-        - name: ASPNETCORE_ENVIRONMENT
-          value: "Production"
-        - name: API_BASE_URL
-          value: "http://knowyourname-api-service"
-        resources:
-          requests:
-            memory: "256Mi"
-            cpu: "250m"
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
-        livenessProbe:
-          httpGet:
-            path: /
-            port: 8080
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /
-            port: 8080
-          initialDelaySeconds: 5
-          periodSeconds: 5
+        - name: web
+          image: acrknownamedevelopment.azurecr.io/knowyourname-web:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: "Production"
+            - name: API_BASE_URL
+              value: "http://knowyourname-api-service"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
 
 ---
 apiVersion: v1
