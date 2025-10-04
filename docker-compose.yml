@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: src/KnowYourName.Api/Dockerfile
+    ports:
+      - "5000:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=postgres;Database=knowyourname;Username=postgres;Password=postgres
+    depends_on:
+      - postgres
+    networks:
+      - knowyourname-network
+
+  web:
+    build:
+      context: .
+      dockerfile: src/KnowYourName.Web/Dockerfile
+    ports:
+      - "3000:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - API_BASE_URL=http://api:8080
+    depends_on:
+      - api
+    networks:
+      - knowyourname-network
+
+  postgres:
+    image: postgres:15
+    environment:
+      - POSTGRES_DB=knowyourname
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - knowyourname-network
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+networks:
+  knowyourname-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
