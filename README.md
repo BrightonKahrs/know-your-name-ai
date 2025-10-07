@@ -9,8 +9,8 @@ This repository is designed to explore and learn about:
 - **Azure Kubernetes Service (AKS)** - Container orchestration based on OSS Kubernetes
 - **Azure PostgreSQL Flexible Server** - Managed database service based on OSS PostgreSQL
 - **API Management + AI** - Azure API Management with AI-powered services
-- **Semantic Kernel (OSS)** - Microsoft's AI agent framework
-- **C# / .NET (OSS)** - Modern web development with .NET 8
+- **Python & FastAPI** - Modern async web API development
+- **Flask** - Lightweight web application framework
 - **Terraform (OSS)** - Infrastructure as Code
 - **Load Testing with Locust (OSS)** - Performance testing
 - **E2E Testing with Playwright (OSS)** - Browser automation and testing
@@ -21,8 +21,8 @@ This repository is designed to explore and learn about:
 
 This application follows a microservices architecture deployed on Azure Kubernetes Service:
 
-- **API Service**: C# / .NET 8 Web API with Semantic Kernel for AI-powered name analysis
-- **Web Service**: Frontend application (Blazor WebAssembly)
+- **API Service**: Python FastAPI with AI-powered name analysis
+- **Web Service**: Flask-based frontend application
 - **PostgreSQL**: Managed database for storing name analysis data
 - **API Management**: Gateway and API management layer
 - **Container Registry**: Azure Container Registry for Docker images
@@ -32,22 +32,31 @@ This application follows a microservices architecture deployed on Azure Kubernet
 ```
 know-your-name-ai/
 ├── src/                          # Main application code
-│   ├── KnowYourName.Api/         # C# .NET Web API
-│   ├── KnowYourName.Web/         # Frontend application
-│   └── KnowYourName.sln          # Solution file
+│   ├── backend/                  # FastAPI backend service
+│   │   ├── main.py
+│   │   ├── requirements.txt
+│   │   ├── Dockerfile
+│   │   └── backend-venv/         # Python virtual environment
+│   └── frontend/                 # Flask frontend service
+│       ├── app.py
+│       ├── requirements.txt
+│       ├── Dockerfile
+│       ├── templates/
+│       ├── static/
+│       └── frontend-venv/        # Python virtual environment
 ├── infrastructure/               # Terraform infrastructure code
 │   ├── main.tf
 │   ├── aks.tf
 │   ├── postgresql.tf
 │   └── api-management.tf
 ├── k8s/                         # Kubernetes manifests
-│   ├── api-deployment.yaml
-│   ├── web-deployment.yaml
+│   ├── backend-deployment.yaml
+│   ├── frontend-deployment.yaml
 │   └── ingress.yaml
 ├── tests/                       # Testing framework
 │   ├── load-tests/              # Locust load tests
 │   ├── e2e-tests/               # Playwright E2E tests
-│   └── unit-tests/              # C# unit tests
+│   └── unit-tests/              # Python unit tests
 ├── .github/workflows/           # CI/CD pipelines
 │   ├── build-and-test.yml
 │   ├── deploy-to-aks.yml
@@ -59,7 +68,7 @@ know-your-name-ai/
 
 ### Prerequisites
 
-- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+- [Python 3.11+](https://www.python.org/downloads/)
 - [Docker](https://www.docker.com/get-started)
 - [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
 - [Terraform](https://www.terraform.io/downloads.html)
@@ -83,19 +92,27 @@ know-your-name-ai/
 3. **Or run individually**
 
    ```bash
-   # API
-   cd src/KnowYourName.Api
-   dotnet run
+   # Backend API
+   cd src/backend
+   python -m venv backend-venv
+   backend-venv\Scripts\activate  # On Windows
+   # source backend-venv/bin/activate  # On Linux/macOS
+   pip install -r requirements.txt
+   python main.py
 
-   # Web
-   cd src/KnowYourName.Web
-   dotnet run
+   # Frontend
+   cd src/frontend
+   python -m venv frontend-venv
+   frontend-venv\Scripts\activate  # On Windows
+   # source frontend-venv/bin/activate  # On Linux/macOS
+   pip install -r requirements.txt
+   python app.py
    ```
 
 ### Testing
 
-- **Unit Tests**: `dotnet test tests/unit-tests/KnowYourName.Tests/`
-- **Load Tests**: `cd tests/load-tests && locust --host http://localhost:5000`
+- **Unit Tests**: `cd tests/unit-tests && python -m pytest`
+- **Load Tests**: `cd tests/load-tests && locust --host http://localhost:8000`
 - **E2E Tests**: `cd tests/e2e-tests && npx playwright test`
 
 ## ☁️ Azure Deployment

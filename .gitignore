@@ -3,6 +3,10 @@
 .env.local
 .env.production
 
+#Virtual environments
+frontend-venv
+backend-venv
+
 # Build outputs
 bin/
 obj/
